@@ -1,7 +1,7 @@
 # http://module-build.sourceforge.net/META-spec.html
 #XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
 name:         Catalyst-View-Seamstress
-version:      0.21
+version:      1.10
 version_from: lib/Catalyst/View/Seamstress.pm
 installdirs:  site
 requires:

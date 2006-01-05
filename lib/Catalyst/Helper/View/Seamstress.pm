@@ -126,12 +126,15 @@ __PACKAGE__->config(
   comp_root => $comp_root,
   skeleton  => '[% skeleton %]',
   meat_pack => sub { 
-    my ($self, $c, $stash, $meat, $skeleton) = @_; 
-
     my $body_elem = $skeleton->look_down('_tag' => 'body');
-    my $meat_body = $meat->look_down(id => 'meatstress');
+    my $meat_body = $skeleton->look_down(seamstress => 'replace');
 
-    $body_elem->push_content($meat_body->content_list);
+    unless ($meat_body) {
+      warn "could not find meat_body";
+      die $meat->as_HTML;
+    }
+
+    $meat_body->replace_content($meat->content_list);
   } # default sub, only runs if skeleton is true
  ) ;
 

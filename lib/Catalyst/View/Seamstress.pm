@@ -7,8 +7,8 @@ use base qw/Catalyst::View/;
 use NEXT;
 
 
+our ($VERSION) = ('$Revision: 1.10 $' =~ m/([\.\d]+)/) ;
 
-our $VERSION = '0.21';
 
 =head1 NAME
 
@@ -71,18 +71,54 @@ Or you might like to use
 L<Catalyst::Plugin::DefaultEnd|Catalyst::Plugin::DefaultEnd>
 
 
-=head2 CONFIGURATION
+=head1 CONFIGURATION
 
 The helper app automatically puts the per-application
-configuration info in C<MyApp::View::Seamstress>. All of it is
-optional and none of it will be used with the default
-configuration.
-
-Information varying per-request goes into the stash
-as shown in the SYNOPSIS.
-
+configuration info in C<MyApp::View::Seamstress>.
 
 =head2 RENDERING VIEWS
+
+=head1 The meat-skeleton paradigm
+
+When Catalyst::View::Seamstress is forwarded to, it can be used in 3
+ways depending on how the stash and the View config variables are set
+at that time. 
+
+HTML pages typically have meat and a skeleton. The meat varies from page
+to page while the skeleton is fairly (though not completely) 
+static. For example, the skeleton of a webpage is usually a header, a
+footer, and a navbar. The meat is what shows up when you click on a
+link on the page somewhere. While the meat will change with each
+click, the skeleton is rather static.
+
+The perfect example of 
+
+Mason accomodates the meat-skeleton paradigm via
+an C<autohandler> and C<< $m->call_next() >>. Template 
+accomodates it via its C<WRAPPER> directive.
+
+And Seamstress? Well, here's what you _can_ do:
+
+=over
+
+=item 1 generate the meat, C<$meat>
+
+This is typically what you see in the C<body> part of an HTML page
+
+=item 2 generate the skeleton, C<$skeleton>
+
+This is typically the html, head, and maybe some body 
+
+=item 3 put the meat in the skeleton
+
+=back
+
+So, nothing about this is forced. This is just how I typically do
+things and that is why
+L<Catalyst::View::Seamstress|Catalyst::View::Seamstress> has support
+for this.
+
+
 
 There are two items which control how this plugin renders HTML.
 
@@ -139,11 +175,11 @@ is stored in
 C<< $c->response->body >>.
 
 
-=head2 METHODS
 
-=over 4
 
-=item new
+=for comment
+
+ new()
 
 The constructor for the Seamstress view 
 
@@ -164,7 +200,9 @@ sub new {
 
 
 
-=item process
+=for comment
+
+ process()
 
 C<< eval-requires >> the module specified in C<< $c->stash->{template} >>. 
 Gets the 
@@ -226,10 +264,10 @@ sub page2tree {
 sub process {
     my ( $self, $c ) = @_;
 
-    my $body ;
+    my ($skeleton, $meat, $body) ;
 
-    warn "self_config(PROCESS): " . Dumper($self->config) ;
-    warn "c_config(PROCESS): " . Dumper($c->config) ;
+    #warn "self_config(PROCESS): " . Dumper($self->config) ;
+    #warn "c_config(PROCESS): " . Dumper($c->config) ;
 
 
     # 
@@ -247,22 +285,35 @@ sub process {
       $c->response->content_type('text/html; charset=utf-8');
     }
 
-    my $meat = $body = $self->page2tree($c, $template);
 
+    if (ref($template) eq 'ARRAY') {
+
+      map {
+	$meat->{$_} = $self->page2tree($c, $_);
+      } @$template;
+
+    } else {
+
+      $meat = $body = $self->page2tree($c, $template);
+
+    }
 
     # 
     # render and pack MyApp::View::Seamstress->config->{skeleton}
     # if defined
     #
 
-
-    my $skeleton;
     if ($skeleton = $self->config->{skeleton}) {
       $skeleton = $self->page2tree($c, $skeleton);
+      warn "SAH: ", $skeleton->as_HTML;
       $self->config->{meat_pack}->(
 	$self, $c, $c->stash, $meat, $skeleton
        );
-      $body = $self->page2tree($c, $skeleton, 'fixup');
+
+      # $body = $self->page2tree($c, $skeleton, 'fixup');
+      # this should be additional controller actions for the request
+
+      $body = $skeleton ;
     }
 
     # 
