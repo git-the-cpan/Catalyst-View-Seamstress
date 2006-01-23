@@ -124,8 +124,11 @@ sub comp_root { $comp_root }
 
 __PACKAGE__->config(
   comp_root => $comp_root,
+  fixup     => sub { } ,
   skeleton  => '[% skeleton %]',
   meat_pack => sub { 
+    my ($self, $c, $stash, $meat, $skeleton) = @_;
+
     my $body_elem = $skeleton->look_down('_tag' => 'body');
     my $meat_body = $skeleton->look_down(seamstress => 'replace');
 
