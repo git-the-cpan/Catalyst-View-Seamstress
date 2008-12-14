@@ -9,7 +9,7 @@ use NEXT;
 use Data::Dumper;
 
 
-our ($VERSION) = ('$Revision: 1.15 $' =~ m/([\.\d]+)/) ;
+our ($VERSION) = ('$Revision: 2.0 $' =~ m/([\.\d]+)/) ;
 
 
 =head1 NAME
@@ -32,7 +32,7 @@ Catalyst::View::Seamstress - HTML::Seamstress View Class for Catalyst
     sub message : Global {
         my ( $self, $c ) = @_;
 
-        $c->stash->{template} = 'html::hello_world';
+        $c->stash->{LOOM} = 'html::hello_world';
         $c->stash->{name}     = 'Mister GreenJeans';
         $c->stash->{date}     = 'Today';
 
@@ -77,7 +77,7 @@ L<Catalyst::Plugin::DefaultEnd|Catalyst::Plugin::DefaultEnd>
 
 The helper app automatically puts the per-application
 configuration info in C<MyApp::View::Seamstress>. You configure the
-per-request information (e.g. C<< $c->stash->{template} >> and
+per-request information (e.g. C<< $c->stash->{LOOM} >> and
 variables for this template) in your controller.
 
 
@@ -149,14 +149,14 @@ will balk with an error:
 =item * C<< MyApp::View::Seamstress->config->{skeleton} >>
 
 By default this is not set and the HTML output is simply the result of
-taking  C<< $c->stash->{template} >>, calling C<new()> to create
+taking  C<< $c->stash->{LOOM} >>, calling C<new()> to create
 an HTML tree and then passing this to C<process()> so that it can rework
 the tree.
 
 However, if C<< MyApp::View::Seamstress->config->{skeleton} >> is
 set, then both its value and the values of
 C<< MyApp::View::Seamstress->config->{meat_pack} >>
-and C<< $stash->{template}->fixup() >>
+and C<< $stash->{LOOM}->fixup() >>
 come into effect
 as described in L<HTML::Seamstress/"The_meat-skeleton_paradigm">.
 
@@ -199,7 +199,7 @@ sub new {
 
 # process()
 
-# C<< eval-requires >> the module specified in C<< $c->stash->{template} >>. 
+# C<< eval-requires >> the module specified in C<< $c->stash->{LOOM} >>. 
 # Gets the 
 # C<HTML::Tree> representation of the file via C<new> and then calls 
 # C<< $self->process($c, $c->stash) >> to rewrite the tree. 
@@ -318,8 +318,15 @@ sub process {
     # take the the body 
     #
 
-
-    $c->response->body( $body->as_HTML(undef, ' ') );
+    my $response_body;
+    if ( $c->config->{use_xhtml} ) {
+        $response_body = $body->as_XML( undef, ' ' );
+    }
+    else {
+        $response_body = $body->as_HTML(undef, ' ')
+    }
+ 
+    $c->response->body( $response_body );
 
     return 1;
 }
