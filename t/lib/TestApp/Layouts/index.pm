@@ -38,9 +38,6 @@ sub new {
 sub process {
   my ($tree, $c, $stash) = @_;
 
-  use Data::Dumper;
-  warn "PROCESS_TREE: ", $tree->as_HTML;
-
    $tree->look_down(id => $_)->replace_content( 'REPLACED' )
        for qw(name);
 
