@@ -6,7 +6,7 @@ use base qw/Catalyst::View/;
 
 use Data::Dumper;
 
-our $VERSION = '2.2_001';
+our $VERSION = '2.2_002';
 
 
 =head1 NAME
@@ -25,7 +25,8 @@ Catalyst::View::Seamstress - HTML::Seamstress View Class for Catalyst
 # in lib/MyApp/View/Seamstress.pm
 
 # create your seamstress template packaged with spkg.pl
-# see HTML::Seamstress
+# see HTML::Seamstress.. This will give you a .pm file to go with your html, 
+# so something like html::helloworld
 
 # render view from lib/MyApp.pm or lib/MyApp::C::SomeController.pm
 
@@ -41,6 +42,14 @@ Catalyst::View::Seamstress - HTML::Seamstress View Class for Catalyst
         # the DefaultEnd plugin would mean no need for this line
         $c->forward('MyApp::View::Seamstress');
     }
+
+# and in your html::helloworld you can do something like:
+
+ sub process{
+     my( $tree, $c, $stash ) = @_;
+     
+     $tree->look_down( id => 'name' )->replace_content( $stash->{name}
+ }
 
 
 =head1 DESCRIPTION
