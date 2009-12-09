@@ -6,7 +6,7 @@ use base qw/Catalyst::View/;
 
 use Data::Dumper;
 
-our $VERSION = '2.2_002';
+our $VERSION = '2.2';
 
 
 =head1 NAME
@@ -48,13 +48,18 @@ Catalyst::View::Seamstress - HTML::Seamstress View Class for Catalyst
  sub process{
      my( $tree, $c, $stash ) = @_;
      
-     $tree->look_down( id => 'name' )->replace_content( $stash->{name}
+     $tree->look_down( id => 'name' )->replace_content( $stash->{name} );
  }
 
 
 =head1 DESCRIPTION
 
-This is the Catalyst view class for L<HTML::Seamstress|HTML::Seamstress>.
+
+This is the Catalyst view class for L<HTML::Seamstress|HTML::Seamstress>. It allows 
+templating with proper seperation between code and HTML. This means you can get a 
+designer/friend/client/stooge to make your templates for you without having to 
+teach them a mini-language!
+
 Your application should define a view class which is a subclass of
 this module.  The easiest way to achieve this is using the
 F<myapp_create.pl> script (where F<myapp> should be replaced with
@@ -83,7 +88,7 @@ to the Seamstress view class.
 Or you might like to use 
 L<Catalyst::Plugin::DefaultEnd|Catalyst::Plugin::DefaultEnd>
 
-or even
+..or even
 L<Catalyst::Action::RenderView|Catalyst::Action::RenderView>
 
 

@@ -1,4 +1,4 @@
-2.2_002 - 16 Oct 2009
+2.2 - 09 Dec 2009
       * Test fix ( skip failing Catalyst::Test properly )
       * Better memory cleanup when using a skeleton
       * Some documentation tweaks

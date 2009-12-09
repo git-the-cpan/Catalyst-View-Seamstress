@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Catalyst-View-Seamstress
-version:            2.2_002
+version:            2.2
 abstract:           ~
 author:
     - Terrence Brannon (metaperl@gmail.com)
